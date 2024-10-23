@@ -87,3 +87,60 @@ LIMIT 1;
 SELECT Doctor.Doctor_Name, Hospital.Hospital_Name
 FROM Doctor
 JOIN Hospital ON Doctor.Hospi_reg_no = Hospital.Hospi_reg_no;
+
+
+-- Query 16: Find all hospitals where a specific department is available.
+SELECT Hospital.Hospital_Name
+FROM Hospital
+JOIN works_for ON Hospital.Hospi_reg_no = works_for.H_Id
+JOIN Department ON works_for.D_no = Department.Dep_id
+WHERE Department.Dep_name = 'Cardiology';
+
+-- Query 17: List all nurses assigned to a particular room.
+SELECT Nurse.Nurse_name, Nurse.nurse_room
+FROM Nurse
+WHERE Nurse.nurse_room = '101';
+
+-- Query 18: Find the contact numbers of a particular patient.
+SELECT phone_no.Patnt_phone
+FROM phone_no
+JOIN Patient ON phone_no.Patnt_Id = Patient.Patient_ID
+WHERE Patient.Patient_Name = 'Rahul Sharma';
+
+-- Query 19: Retrieve the details of all inpatients who have been discharged.
+SELECT Inpatient.*
+FROM Inpatient
+WHERE Inpatient.Date_of_dis IS NOT NULL;
+
+-- Query 20: Get the total number of rooms in each hospital and their status.
+SELECT Hospital.Hospital_Name, Room.Status, COUNT(Room.Room_no) AS Total_Rooms
+FROM Room
+JOIN Hospital ON Room.Hospi_reg_no = Hospital.Hospi_reg_no
+GROUP BY Hospital.Hospital_Name, Room.Status;
+
+-- Query 21: List all doctors along with the departments they work in.
+SELECT Doctor.Doctor_Name, Department.Dep_name
+FROM Doctor
+JOIN Department ON Doctor.Dep_id = Department.Dep_id;
+
+-- Query 22: Find the number of male and female patients treated in each hospital.
+SELECT Hospital.Hospital_Name, Patient.Sex, COUNT(Patient.Patient_ID) AS Total_Patients
+FROM Patient
+JOIN Hospital ON Patient.Hospi_reg_no = Hospital.Hospi_reg_no
+GROUP BY Hospital.Hospital_Name, Patient.Sex;
+
+-- Query 23: Retrieve details of all lab reports issued between specific dates.
+SELECT *
+FROM Lab_Report
+WHERE Lab_Report.Date_of_issue BETWEEN '2023-01-01' AND '2023-12-31';
+
+-- Query 24: Get the list of outpatients along with their doctor details.
+SELECT Outpatient.OUT_Id, Patient.Patient_Name, Doctor.Doctor_Name
+FROM Outpatient
+JOIN Patient ON Outpatient.Doc_Id = Patient.Doc_Id
+JOIN Doctor ON Outpatient.Doc_Id = Doctor.Doctor_reg_no;
+
+-- Query 25: List all rooms and their occupancy status.
+SELECT Room.Room_no, Room.Status
+FROM Room;
+
