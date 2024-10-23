@@ -1,3 +1,7 @@
+-- Database creation
+CREATE DATABASE HospitalManagement;
+USE HospitalManagement;
+
 -- File containing queries for creating tables.
 
 -- Table storing a list of Hospitals.
