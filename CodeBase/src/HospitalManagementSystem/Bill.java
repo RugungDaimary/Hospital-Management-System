@@ -14,9 +14,8 @@ public class Bill {
 
     public void viewBills() {
         String query = "SELECT * FROM Bill";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             System.out.println("Bills: ");
             System.out.println("+------------+--------------------+----------+------------+");
             System.out.println("| Bill No    | Charges            | Type     | Patient Id |");
@@ -27,10 +26,10 @@ public class Bill {
                 String type = resultSet.getString("Patient_Type");
                 String patientId = resultSet.getString("Pat_Id");
                 System.out.printf("| %-10d | %-18.2f | %-8s | %-10s |\n", billNo, charges, type, patientId);
-                System.out.println("+------------+--------------------+----------+------------+");
             }
+            System.out.println("+------------+--------------------+----------+------------+");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error viewing bills: " + e.getMessage());
         }
     }
 }

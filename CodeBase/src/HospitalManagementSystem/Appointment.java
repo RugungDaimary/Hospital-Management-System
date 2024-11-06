@@ -29,7 +29,7 @@ public class Appointment {
                         System.out.println("Failed to Book Appointment!");
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.err.println("Error booking appointment: " + e.getMessage());
                 }
             } else {
                 System.out.println("Doctor not available on this date!!");
@@ -44,13 +44,14 @@ public class Appointment {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, doctorId);
             preparedStatement.setString(2, appointmentDate);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                int count = resultSet.getInt(1);
-                return count == 0;
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count == 0;
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error checking doctor availability: " + e.getMessage());
         }
         return false;
     }

@@ -14,21 +14,20 @@ public class Nurse {
 
     public void viewNurses() {
         String query = "SELECT * FROM Nurse";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             System.out.println("Nurses: ");
-            System.out.println("+------------+--------------------+");
-            System.out.println("| Nurse Name | Room No            |");
-            System.out.println("+------------+--------------------+");
+            System.out.println("+--------------------+------------+");
+            System.out.println("| Nurse Name         | Room No    |");
+            System.out.println("+--------------------+------------+");
             while (resultSet.next()) {
                 String nurseName = resultSet.getString("Nurse_name");
                 String roomNo = resultSet.getString("nurse_room");
-                System.out.printf("| %-10s | %-18s |\n", nurseName, roomNo);
-                System.out.println("+------------+--------------------+");
+                System.out.printf("| %-18s | %-10s |\n", nurseName, roomNo);
             }
+            System.out.println("+--------------------+------------+");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error viewing nurses: " + e.getMessage());
         }
     }
 }

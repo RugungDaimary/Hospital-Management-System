@@ -14,9 +14,8 @@ public class Room {
 
     public void viewRooms() {
         String query = "SELECT * FROM Room";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             System.out.println("Rooms: ");
             System.out.println("+------------+--------------------+");
             System.out.println("| Room No    | Status             |");
@@ -25,10 +24,10 @@ public class Room {
                 String roomNo = resultSet.getString("Room_no");
                 String status = resultSet.getString("roomstatus");
                 System.out.printf("| %-10s | %-18s |\n", roomNo, status);
-                System.out.println("+------------+--------------------+");
             }
+            System.out.println("+------------+--------------------+");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error viewing rooms: " + e.getMessage());
         }
     }
 }

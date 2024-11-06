@@ -15,23 +15,22 @@ public class LabReport {
 
     public void viewLabReports() {
         String query = "SELECT * FROM Lab_Report";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            ResultSet resultSet = preparedStatement.executeQuery();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             System.out.println("Lab Reports: ");
-            System.out.println("+------------+--------------------+----------+------------+");
-            System.out.println("| Report Id  | Doctor Id          | Patient Id | Date of Issue |");
-            System.out.println("+------------+--------------------+----------+------------+");
+            System.out.println("+------------+--------------------+------------+--------------+");
+            System.out.println("| Report Id  | Doctor Id          | Patient Id | Date of Issue|");
+            System.out.println("+------------+--------------------+------------+--------------+");
             while (resultSet.next()) {
                 String reportId = resultSet.getString("Report_Id");
                 String doctorId = resultSet.getString("Doctr_Id");
                 String patientId = resultSet.getString("pat_Id");
                 Date dateOfIssue = resultSet.getDate("date_of_issue");
-                System.out.printf("| %-10s | %-18s | %-8s | %-10s |\n", reportId, doctorId, patientId, dateOfIssue);
-                System.out.println("+------------+--------------------+----------+------------+");
+                System.out.printf("| %-10s | %-18s | %-10s | %-12s |\n", reportId, doctorId, patientId, dateOfIssue);
             }
+            System.out.println("+------------+--------------------+------------+--------------+");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error viewing lab reports: " + e.getMessage());
         }
     }
 }
