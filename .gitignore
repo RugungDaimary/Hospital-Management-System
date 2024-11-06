@@ -23,3 +23,14 @@ images/
 # Ignore temporary files
 *.tmp
 *.temp
+
+# Ignore IntelliJ IDEA project files
+.idea/
+CodeBase.iml
+
+# Ignore output directories
+out/
+out/production/CodeBase/HospitalManagementSystem/
+
+# Ignore source directories
+src/HospitalManagementSystem/
