@@ -1,0 +1,25 @@
+# Ignore Mac system files
+.DS_Store
+
+# Ignore Visual Studio Code settings
+.vscode/
+CodeBase/.vscode/
+
+# Ignore compiled Java class files
+CodeBase/bin/
+
+# Ignore libraries
+CodeBase/lib/
+
+# Ignore MySQL connector JAR file
+mysql-connector-j-9.1.0.jar
+
+# Ignore images
+images/
+
+# Ignore logs
+*.log
+
+# Ignore temporary files
+*.tmp
+*.temp
