@@ -9,11 +9,11 @@ import java.util.Scanner;
 public class Appointment {
     public static void bookAppointment(Patient patient, Doctor doctor, Connection connection, Scanner scanner) {
         System.out.print("Enter Patient Id: ");
-        String patientId = scanner.next();
+        String patientId = scanner.nextLine(); // Use nextLine() to capture the full input
         System.out.print("Enter Doctor Id: ");
-        String doctorId = scanner.next();
+        String doctorId = scanner.nextLine(); // Use nextLine() to capture the full input
         System.out.print("Enter appointment date (YYYY-MM-DD): ");
-        String appointmentDate = scanner.next();
+        String appointmentDate = scanner.nextLine(); // Use nextLine() to capture the full input
 
         if (patient.getPatientById(patientId) && doctor.getDoctorById(doctorId)) {
             if (checkDoctorAvailability(doctorId, appointmentDate, connection)) {

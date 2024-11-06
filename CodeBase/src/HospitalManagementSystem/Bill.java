@@ -12,24 +12,25 @@ public class Bill {
         this.connection = connection;
     }
 
-    public void viewBills() {
-        String query = "SELECT * FROM Bill";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            System.out.println("Bills: ");
-            System.out.println("+------------+--------------------+----------+------------+");
-            System.out.println("| Bill No    | Charges            | Type     | Patient Id |");
-            System.out.println("+------------+--------------------+----------+------------+");
-            while (resultSet.next()) {
-                int billNo = resultSet.getInt("Bill_no");
-                float charges = resultSet.getFloat("Bill_Charges");
-                String type = resultSet.getString("Patient_Type");
-                String patientId = resultSet.getString("Pat_Id");
-                System.out.printf("| %-10d | %-18.2f | %-8s | %-10s |\n", billNo, charges, type, patientId);
+    public void getBillingInfoByPatientId(int patientId) {
+        String query = "SELECT * FROM Bill WHERE Patient_Id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, patientId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                System.out.println("Billing Information for Patient ID " + patientId + ": ");
+                System.out.println("+--------+-------------+--------------+");
+                System.out.println("| Bill No| Bill Charges| Patient Type |");
+                System.out.println("+--------+-------------+--------------+");
+                while (resultSet.next()) {
+                    int billNo = resultSet.getInt("Bill_no");
+                    double billCharges = resultSet.getDouble("Bill_Charges");
+                    String patientType = resultSet.getString("Patient_Type");
+                    System.out.printf("| %-6d | %-11.2f | %-12s |\n", billNo, billCharges, patientType);
+                }
+                System.out.println("+--------+-------------+--------------+");
             }
-            System.out.println("+------------+--------------------+----------+------------+");
         } catch (SQLException e) {
-            System.err.println("Error viewing bills: " + e.getMessage());
+            System.err.println("Error retrieving billing info by patient ID: " + e.getMessage());
         }
     }
 }

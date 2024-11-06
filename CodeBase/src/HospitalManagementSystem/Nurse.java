@@ -21,8 +21,8 @@ public class Nurse {
             System.out.println("| Nurse Name         | Room No    |");
             System.out.println("+--------------------+------------+");
             while (resultSet.next()) {
-                String nurseName = resultSet.getString("Nurse_name");
-                String roomNo = resultSet.getString("nurse_room");
+                String nurseName = resultSet.getString("Nurse_Name"); // Corrected column name
+                String roomNo = resultSet.getString("Room_no"); // Corrected column name
                 System.out.printf("| %-18s | %-10s |\n", nurseName, roomNo);
             }
             System.out.println("+--------------------+------------+");

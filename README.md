@@ -61,29 +61,29 @@ The resulting diagram:
 
 A relational model is a way of conceptually representing and managing data in a database by putting it into tables.
 
-Upon converting the previously mentioned Entity - Relationship diagram into a Relational Model, we obtain the following tables:
+Upon converting the previously mentioned Entity-Relationship diagram into a Relational Model, we obtain the following tables:
 
 **Tables constructed from the entities (10):**
 
-1.  Hospital (<span style="text-decoration:underline;">Hospital_Id</span>, Name, Address)
-2.  Department (<span style="text-decoration:underline;">Department_no</span>, Department_Name)
-3.  Doctor (<span style="text-decoration:underline;">Doctor_Id</span>, Doctor_Name, Sex, Dept_num, Hosp_id)
-4.  Patient (<span style="text-decoration:underline;">Patient_Id</span>, Disease, Sex, Patient_name, Doc_Id,Hos_Id) <br>
-    4.1. Phone_no(<span style="text-decoration:underline;">Patnt_Id, Patnt_phone</span>) <br>
-5.  Bill (<span style="text-decoration:underline;">Bill_no</span>, Bill_Charges, Patient_Type, Pat_Id, Pat_name)
-6.  Room (<span style="text-decoration:underline;">Room_no</span>, roomstatus)
-7.  Inpatient (<span style="text-decoration:underline;">IN_Id</span>, Doc_Id, R_no, Rept_Id, Date_of_adm, Date_of_dis, B_no)
-8.  Outpatient (<span style="text-decoration:underline;">OUT_Id</span>, Rept_Id, Doc_Id, B_no)
-9.  Lab_Report (<span style="text-decoration:underline;">Report_Id</span>, Doctr_Id, pat_Id, date_of_Issue)
-10. Nurse (<span style="text-decoration:underline;">Nurse_name, nurse_room</span>)
+1. **Hospital**: (Hospital_Id, Name, Address)
+2. **Department**: (Department_Id, Department_Name)
+3. **Doctor**: (Doctor_Id, Doctor_Name, Sex, Department_Id, Hospital_Id)
+4. **Patient**: (Patient_Id, Patient_Name, Disease, Sex, Doctor_Id, Hospital_Id)
+    - **Phone_No**: (Patient_Id, Patient_Phone)
+5. **Bill**: (Bill_no, Bill_Charges, Patient_Type, Patient_Id, Patient_Name)
+6. **Room**: (Room_no, Room_Status)
+7. **Inpatient**: (Inpatient_Id, Doctor_Id, Room_no, Report_Id, Date_of_Admission, Date_of_Discharge, Bill_no)
+8. **Outpatient**: (Outpatient_Id, Doctor_Id, Report_Id, Bill_no)
+9. **Lab_Report**: (Report_Id, Doctor_Id, Patient_Id, Date_of_Issue)
+10. **Nurse**: (Nurse_Id, Nurse_Name, Room_no)
 
-**Tables constructed from the M-N relationships (4):**
+**Tables constructed from the M-N relationships (1):**
 
-1. works_for (<span style="text-decoration:underline;">H_Id, D_no</span>, brand_id)
+1. **Works_For**: (Hospital_Id, Department_Id)
 
-## Result of mapping the HOSPITAL MANAGEMENT ER schema into a relational database schema :
+## Result of mapping the HOSPITAL MANAGEMENT ER schema into a relational database schema:
 
-<p align ="center">
+<p align="center">
 <img src="images/img3.png"/>
 </p>
 
@@ -95,163 +95,53 @@ Below are the constraints that we impose on the constructed tables:
 
 **Constraints on tables constructed from the entities (7):**
 
-1. **Hospital**: This table lists the names of various Hospitals in our inventory along with their Id's and Addresses. The Hospital_Id is the primary key, and clearly, the Name and Address column should never be left empty.
+1. **Hospital**: 
+   - Primary Key: Hospital_Id
+   - Name and Address should not be NULL.
 
-```sql
--- Table storing a list of Hospitals.
-create table Hospital(
-Name varchar(30) NOT NULL,
-Address varchar(100) NOT NULL,
-Hospital_Id varchar(9) primary key);
-```
+2. **Department**: 
+   - Primary Key: Department_Id
+   - Department_Name should not be NULL.
 
-2. **Department**: This table lists the various Departments of medicine in our inventory that may or may not be present in every Hospital. The Department_no is the primary key, and the Department_name column should never contain null values (defeats the purpose).
+3. **Doctor**: 
+   - Primary Key: Doctor_Id
+   - Foreign Keys: Department_Id (references Department), Hospital_Id (references Hospital)
+   - Doctor_Name and Sex should not be NULL.
 
-```sql
--- Table storing a list of Departments a hospital may have.
-create table Department(
-Department_no int primary key,
-Department_Name varchar(20) NOT NULL
-);
-```
+4. **Patient**: 
+   - Primary Key: Patient_Id
+   - Foreign Keys: Doctor_Id (references Doctor), Hospital_Id (references Hospital)
+   - Patient_Name and Sex should not be NULL.
 
-3. **Doctor**: This table lists the various Doctors in our inventory, and also a doctor works for a single Hospital. The Doctor_Id is the primary key, and the other attributes are Doctor_name, Sex, Dept_num(referenced with Department(Department_no)), Hosp_Id(referenced with Hospital(Hospital_Id)).
+5. **Bill**: 
+   - Primary Key: Bill_no
+   - Patient_Id is now an INT to match the Patient table.
 
-```sql
--- Table storing a list of Doctors working for the hospitals.
-create table Doctor(
-Doctor_Name varchar(30) NOT NULL,
-sex varchar(1) NOT NULL,
-Dept_num int NOT NULL,
-Doctor_Id varchar(6) primary key,
-Hosp_Id varchar(9) NOT NULL,
-foreign key(Hosp_Id) references Hospital(Hospital_Id),
-foreign key(Dept_num) references Department(Department_no)
-);
-```
+6. **Room**: 
+   - Primary Key: Room_no
+   - Room_Status should not be NULL.
 
-4. **Patient**: This table contains details about Patients, including their name, Disease, Sex, phone number (which has to be a valid phone number - we’ve implemented a CHECK to handle this suitably), Doc_Id(referenced with Department(Department_no)), Hos_Id(referenced with Hospital(Hospital_Id)). Each Patient is assigned a unique id i.e, Patient_Id which is used as the primary key in this table.
+7. **Inpatient**: 
+   - Primary Key: Inpatient_Id
+   - Foreign Keys: Doctor_Id (references Doctor), Room_no (references Room), Report_Id (references Lab_Report), Bill_no (references Bill)
 
-```sql
--- Table storing a list of Patients admitted to the hospital.
-create table Patient(
-Patient_Name varchar(30),
-Disease varchar(20),
-Sex varchar(1),
-Doc_Id varchar(6),
-Hos_Id varchar(9),
-Patient_Id varchar(6) primary key,
-foreign key(Doc_Id) references Doctor(Doctor_Id),
-foreign key(Hos_Id) references Hospital(Hospital_Id)
-);
-```
+8. **Outpatient**: 
+   - Primary Key: Outpatient_Id
+   - Foreign Keys: Doctor_Id (references Doctor), Report_Id (references Lab_Report), Bill_no (references Bill)
 
-<br>
-      4.1. Phone_no : This table contact details of Patients. Being multivalued, we make a separate table whose Patient Id(Patnt_Id) references Patient(Patient_Id). The patient Id and phone number together forms primary key.
+9. **Lab_Report**: 
+   - Primary Key: Report_Id
+   - Foreign Keys: Doctor_Id (references Doctor), Patient_Id (references Patient)
 
-```sql
--- Table to store contact details of the patient.
-create table phone_no(
-Patnt_Id varchar(6),
-Patnt_phone varchar(10) NOT NULL CHECK (patnt_phone NOT LIKE '%[^0-9]%'),
-foreign key(Patnt_Id) references Patient(Patient_Id),
-primary key(Patnt_Id,Patnt_phone)
-);
-```
+10. **Nurse**: 
+    - Primary Key: Nurse_Id
+    - Foreign Key: Room_no (references Room)
 
-<br>
+**Constraints on tables constructed from the relationships (1):**
 
-5. **Bill**: This table contains details about the patient, including their name, Id and type along with the bill charges. Each Bill is assigned a unique id i.e, Bill_no, which is the primary key here.
-
-```sql
--- Table storing the financial details of the patient.
-create table Bill(
-Bill_Charges float,
-Patient_Type varchar(10),
-Bill_no int primary key,
-Pat_Id varchar(6),
-Pat_name varchar(30)
-);
-```
-
-6. **Room**: This table contains details regarding the rooms in the hospital. A unique id is assigned to each room i.e, room_no(the primary key). We also get to know the current status of the room (i.e. whether the room is vacant / occupied). Relevant constraints have been added.
-
-```sql
--- Table storing a list of rooms in hospital.
-create table Room(
-Room_no varchar(5) primary key,
-roomstatus varchar(6) NOT NULL
-);
-```
-
-7. **Inpatient**: Similar to the _Patient_ table, this table contains details about the Patients that are admitted to the hospital (and stays within the hospital) that includes room number(R_no referenced to Room(Room_no)), Doctor Id(Doc_Id referenced to Doctor(Doctor_Id)), report id(Rept_Id referenced to Lab_Report(Report_Id)), date of admission, date of discharge and Bill no(B_no referenced to Bill(Bill_no)). Each Inpatient is given a unique value (IN_id is the primary key) that is referenced to the Patient_Id.
-
-```sql
--- Table storing a list of Inatients in the hospital.
-create table Inpatient(
-IN_Id varchar(6) primary key,
-Doc_Id varchar(6),
-R_no varchar(5),
-Rept_Id  varchar(10),
-Date_of_adm date,
-Date_of_dis date,
-B_no int,
-foreign key(R_no) references Room(Room_no),
-foreign key(Rept_Id) references Lab_Report(Report_Id),
-foreign key(B_no) references Bill(Bill_no)
-);
-```
-
-8. **Outpatient**: Similar to the _Patient_ table, this table contains details about the Patients that are admitted to the hospital (and do not stay within the hospital) that includes Doctor Id(Doc_Id referenced to Doctor(Doctor_Id)), report id(Rept_Id referenced to Lab_Report(Report_Id)) and Bill no(B_no referenced to Bill(Bill_no)). Each Outpatient is given a unique value (OUT_id is the primary key) that is referenced to the Patient_Id.
-
-```sql
--- Table storing a list of Outpatients in the hospital.
-create table Outpatient(
-OUT_Id varchar(6) primary key,
-Doc_Id varchar(6),
-Rept_Id  varchar(10),
-B_no int,
-foreign key(B_no) references Bill(Bill_no),
-foreign key(Rept_Id) references Lab_Report(Report_Id)
-);
-```
-
-9. **Lab_Report**: This table contains details about the medical conditions of the Patient. Each Lab report is given a unique value (Report_Id is the primary key). It also contains the Doctor Id(Doctr_Id referenced to Doctor(Doctor_Id)), Patient Id(pat_Id referenced to Patient(Patient_Id)) and the date of issue of the report.
-
-```sql
--- Table storing details of medical reports of the patient.
-create table Lab_Report(
-Doctr_Id varchar(6),
-Report_Id varchar(10) primary key,
-pat_Id varchar(6),
-date_of_issue date,
-foreign key(Doctr_Id) references Doctor(Doctor_Id)
-);
-```
-
-10. **Nurse**: This table contains details about the Nurse that includes the Name of the nurse and the room she governs.
-
-```sql
--- Table storing a list of nurse in the hospital.
-create table Nurse(
-Nurse_name varchar(30),
-nurse_room varchar(5),
-primary key(Nurse_name,nurse_room),
-foreign key(nurse_room) references Room(Room_no)
-);
-```
-
-**Constraints on tables constructed from the relationships (4):**
-
-1. **works_for**: This table relates Hospitals to their respective Doctors, and contains mappings from H_Id to D_no. Since the relationship is many to many, we make H_Id and D_no together as the primary key and reference them with Hospital(Hospital_Id) and Department(Department_no) respectively. Both attributes are also foreign keys.
-
-```sql
--- Table to denote many to many Department 'works_for' hospital Relationship.
-create table works_for(
-H_Id varchar(9),
-D_no int,
-foreign key(D_no) references Department(Department_no),
-foreign key(H_Id) references Hospital(Hospital_Id),
-Primary key(H_ID,D_no)
-);
-```
+1. **Works_For**: 
+   - Primary Key: (Hospital_Id, Department_Id)
+   - Foreign Keys: 
+     - Hospital_Id (references Hospital)
+     - Department_Id (references Department)
+   - This table establishes a many-to-many relationship between hospitals and departments, ensuring that each department can be associated with multiple hospitals and vice versa. The combination of Hospital_Id and Department_Id as a composite primary key ensures that each pair is unique, preventing duplicate entries for the same hospital-department relationship.

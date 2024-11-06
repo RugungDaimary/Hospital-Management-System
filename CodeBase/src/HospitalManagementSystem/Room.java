@@ -22,7 +22,7 @@ public class Room {
             System.out.println("+------------+--------------------+");
             while (resultSet.next()) {
                 String roomNo = resultSet.getString("Room_no");
-                String status = resultSet.getString("roomstatus");
+                String status = resultSet.getString("Room_Status"); // Corrected column name
                 System.out.printf("| %-10s | %-18s |\n", roomNo, status);
             }
             System.out.println("+------------+--------------------+");
